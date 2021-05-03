@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Axios from 'axios';
 import { TextField, Button } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
+import { format } from 'date-fns';
+import pt from 'date-fns/locale/pt';
 
 
 const itensViability = [
@@ -38,8 +40,8 @@ const Page = () => {
     const [registerDate, setRegisterDate] = useState("");
 
     const submitData = () => {
-        //const date = new Date();
-        //setRegisterDate
+        const date = format(new Date(), "yyyy-MM-dd", { locale: pt })
+        setRegisterDate(date);
         Axios.post("http://localhost:3001/api/insert", {
             nameOwner: nameOwner,
             description: description,
@@ -47,11 +49,10 @@ const Page = () => {
             startDate: startDate,
             endDate: endDate,
             status: status,
-            //     registerDate: registerDate,
+            registerDate: registerDate,
         }).then(() => {
             alert("Cadastrado com Sucesso");
         })
-
     };
 
     return <div className="title">
