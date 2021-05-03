@@ -1,25 +1,45 @@
 import React, { useState } from "react";
 import Axios from 'axios';
-import "./styles.css";
+import { TextField, Button } from '@material-ui/core';
+import MenuItem from '@material-ui/core/MenuItem';
+
+
+const itensViability = [
+    { value: '1', label: '1' },
+    { value: '2', label: '2' },
+    { value: '3', label: '3' },
+    { value: '4', label: '4' },
+    { value: '5', label: '5' },
+];
+
+const itensStatus = [
+    { value: '1', label: 'Planejado' },
+    { value: '2', label: 'Em Desenvolvimento' },
+    { value: '3', label: 'Cancelado' },
+    { value: '4', label: 'Concluído' },
+];
+
 
 
 const Page = () => {
 
+    const [viability, setViability] = React.useState('1');
+    const handleChangeViability = (event) => {
+        setViability(event.target.value);
+    };
+    const [status, setStatus] = useState("1");
+    const handleChangeStatus = (event) => {
+        setStatus(event.target.value);
+    };
     const [nameOwner, setNameOwner] = useState("");
     const [description, setDescription] = useState("");
-    const [viability, setViability] = useState("");
-    const [status, setStatus] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-    //const [projectList, setProjectList] = useState([]);
-
-    /* useEffect(() => {
-         Axios.get("http://localhost:3001/api/get").then((response) => {
-             setProjectList(response.data);
-         })
-     }, []);*/
+    const [registerDate, setRegisterDate] = useState("");
 
     const submitData = () => {
+        //const date = new Date();
+        //setRegisterDate
         Axios.post("http://localhost:3001/api/insert", {
             nameOwner: nameOwner,
             description: description,
@@ -27,88 +47,97 @@ const Page = () => {
             startDate: startDate,
             endDate: endDate,
             status: status,
+            //     registerDate: registerDate,
         }).then(() => {
             alert("Cadastrado com Sucesso");
         })
 
     };
 
-
     return <div className="title">
         <h1>Cadastro de Projetos</h1>
 
         <div className="form">
-            <label htmlFor="nameOwner">Nome do Responsável: </label>
-            <input
+            <TextField required
+                id="outlined-basic"
+                label="Nome do Responsável"
+                variant="outlined"
                 type="text"
-                id="nameOwner"
                 name="nameOwner"
                 onChange={(e) => {
                     setNameOwner(e.target.value);
                 }} />
 
-            <label htmlFor="nameOwner">Descrição do Projeto: </label>
-            <input
+            <TextField required
+                id="outlined-multiline-static"
+                label="Descrição do Projeto"
+                multiline
+                rows={4}
+                variant="outlined"
                 type="text"
-                id="description"
                 name="description"
                 onChange={(e) => {
                     setDescription(e.target.value);
                 }} />
 
-            <label htmlFor="viability">Viabilidade entre 1 e 5 (1= menos viável / 5=mais viável)</label>
-            <input
-                type="number"
-                id="viability"
-                name="viability"
-                min="1" max="5"
-                onChange={(e) => {
-                    setViability(e.target.value);
-                }} />
+            <TextField required
+                id="standard-select-currency"
+                select
+                label="Viabilidade"
+                value={viability}
+                onChange={handleChangeViability}
+                defaultValue="1"
+                helperText="1=Menos viável / 5=Mais viável"
+            >
+                {itensViability.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                    </MenuItem>
+                ))}
+            </TextField>
 
+            <TextField required
+                id="standard-select-currency"
+                select
+                label="Status"
+                value={status}
+                onChange={handleChangeStatus}
+                defaultValue="1"
+            >
+                {itensStatus.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                    </MenuItem>
+                ))}
+            </TextField>
 
-            <input type="radio" id="planned" name="status" value="1"
-                onChange={(e) => {
-                    setStatus(e.target.value);
-                }} />
-            <label htmlFor="planned">Planejado</label>
-            <input type="radio" id="development" name="status" value="2"
-                onChange={(e) => {
-                    setStatus(e.target.value);
-                }} />
-            <label htmlFor="development">Em Desenvolvimento</label>
-            <input type="radio" id="canceled" name="status" value="3"
-                onChange={(e) => {
-                    setStatus(e.target.value);
-                }} />
-            <label htmlFor="canceled">Cancelado</label>
-            <input type="radio" id="finished" name="status" value="4"
-                onChange={(e) => {
-                    setStatus(e.target.value);
-                }} />
-            <label htmlFor="finished">Concluido</label>
-
-            <label htmlFor="startDate">Data de início do Projeto</label>
-            <input
-                type="date"
+            <TextField
                 id="startDate"
-                name="startDate"
-                onChange={(e) => {
+                label="Data de Início"
+                type="date"
+                defaultValue="0000-00-00"
+                InputLabelProps={{
+                    shrink: true,
+                }} onChange={(e) => {
                     setStartDate(e.target.value);
                 }} />
 
-            <label htmlFor="endDate">Previsão de data final do Projeto</label>
-            <input type="date"
+            <TextField
                 id="endDate"
-                name="endDate"
-                min="startDate"
-                onChange={(e) => {
+                label="Previsão Data Final"
+                type="date"
+                defaultValue="0000-00-00"
+                InputLabelProps={{
+                    shrink: true,
+                }} onChange={(e) => {
                     setEndDate(e.target.value);
                 }} />
 
-            <button onClick={submitData}>Cadastrar</button>
+            <Button variant="contained" color="primary" onClick={submitData}>
+                Cadastrar
+            </Button>
 
-        </div >
+        </div>
     </div >
 }
 

@@ -1,0 +1,45 @@
+
+
+*tela inicial
+ - título
+ - botão cadastrar
+  -- link para cadastrarProjeto
+ - lista
+   -- exibir dados {nomeResponsavel, situacao, viabilidade, dataInicio, acoes, detalhes}
+	  --- destacar com cor verde os projetos com viabilidade = 5
+   -- filtros {situação, viabilidade, dataInicio}
+   -- links {editar, ver, concluirProjeto, cancelarProjeto}
+ - hiperlink para tela editarProjeto
+ - hiperlink para tela verProjeto
+ - botão concluirProjeto
+   -- alterar a situação do projeto para Concluido
+    --- preencher dataConclusao
+   	--- exibir uma notificação confirmando a ação
+ - botão cancelarProjeto
+   -- alterar a situação do projeto para Cancelado
+    --- preencher dataCancelado
+   	--- exibir uma notificação confirmando a ação
+
+*tela/janela cadastrarProjeto
+ - formulário de cadastro
+   -- dataInicio não pode ser menor que dataCadastro
+   -- dataFinal não pode ser menor que dataInicio
+ - botão cadastrar
+   -- preencher automaticamente dataCadastro
+   -- fechar janela/ voltar tela inicial
+ - botão cancelar
+   -- fechar janela/ voltar tela inicial
+
+*tela/janela editarProjeto
+ - exibir dados do projeto (incluindo data de cadastro)
+ - habilitar edição de formulário {descrição, viabilidade, situação}
+ - botão cadastrar
+ - botão cancelar 
+
+*tela/janela verProjeto
+ - exibir dados do projeto (incluido data de cadastro)
+ - botão editar
+   -- link para tela editarProjeto
+ - botão fechar/voltar
+   -- fechar janela/ voltar tela inicial
+

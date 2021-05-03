@@ -1,16 +1,3 @@
-.title {
-    text-align: center;
-  }
-  
-  .form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .form input {
-    width: auto;
-    height: auto;
-    margin: auto;
-  }
+.forms{
+    
+}

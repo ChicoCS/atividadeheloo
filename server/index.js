@@ -39,9 +39,10 @@ app.post("/api/insert", (req, res) => {
     const status = req.body.status;
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
+    //const registerDate = req.body.registerDate;
 
     const sqlInsert =
-        "INSERT INTO dbproject.project(nameOwner, description, viability, status, startDate, endDate, ccDate) VALUES (?, ?, ?, ?, ?, ?, '2030-10-03');"
+        "INSERT INTO dbproject.project(nameOwner, description, viability, status, startDate, endDate, registerDate) VALUES (?, ?, ?, ?, ?, ?, '2020-12-05');"
     conect.query(sqlInsert, [nameOwner, description, viability, status, startDate, endDate])
         .then(conn => {
             console.log("passou");
