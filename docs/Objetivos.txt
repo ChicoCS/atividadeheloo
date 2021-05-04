@@ -1,37 +1,37 @@
 Objetivos
 
-* Tela inicial deve listar os projetos ja cadastrados. Essa tela possui um botão para adicionar novo projeto.
-possível solução:
-  -Criar um banco para armazenar a lista.
-  -Criar uma função de exibir a lista.
-  -Colocar a função na tela inicial do sistema.
-  -Criar um botão "Adicionar Novo" projeto.
 
-* Incluir um novo projeto. 
-Deve-se informar: Descrição, Viabilidade(de 1 a 5, onde 1=baixa Viabilidade e 5=alta Viabilidade),
-data de início previsto, data fim prevista, situação(Planejado, Em desenvolvimento, Cancelado e Concluído),
-valor de execução e nome da pessoa responsável.
-possível solução:
-  -criar uma tabela no banco que receba os seguintes dados:
-    -nome do responsável = char
-    -descrição = text
-    -viabilidade = char (explicar na tela o significado de 1 a 5)
-    -data de início previsto = date ~ datetime
-    -data de fim previsto = date ~ datetime
-    -data de cadastro = timestamp
-    -data de conclusão = timestamp
-    -data de cancelamento = timestamp
-    -situação = char (1=planejado, 2=desenvolvimento, 3=cancelado, 4=concluído)
-
-
-* O sistema deve registrar a data de cadastro e conclusão(situação = Cancelado ou Concluído)
-possível solução:
+OK{ * Tela Inicial
+    * Tela inicial deve listar os projetos ja cadastrados. Essa tela possui um botão para adicionar novo projeto.
+    possível solução:
+      -Criar um banco para armazenar a lista.
+      -Criar uma função de exibir a lista.
+      -Colocar a função na tela inicial do sistema.
+      -Criar um botão "Adicionar Novo" projeto.
+OK}
+OK{ * Incluir um novo projeto. 
+    Deve-se informar: Descrição, Viabilidade(de 1 a 5, onde 1=baixa Viabilidade e 5=alta Viabilidade),
+    data de início previsto, data fim prevista, situação(Planejado, Em desenvolvimento, Cancelado e Concluído),
+    valor de execução e nome da pessoa responsável.
+    possível solução:
+     -criar uma tabela no banco que receba os seguintes dados:
+       -nome do responsável = char
+       -descrição = text
+       -viabilidade = char (explicar na tela o significado de 1 a 5)
+       -data de início previsto = date ~ datetime
+       -data de fim previsto = date ~ datetime
+       -data de cadastro = timestamp
+       -situação = char (1=planejado, 2=desenvolvimento, 3=cancelado, 4=concluído)
+OK}
+-data de conclusão = timestamp
+-data de cancelamento = timestamp
+OK{ * O sistema deve registrar a data de cadastro e conclusão(situação = Cancelado ou Concluído)
+  possível solução:
   -acionar uma função que salve a data quando apertar no botão "Cadastrar"
+OK}
+-Criar uma Função para registrar a data de conclusão
 
 * Projetos mais viáveis (=5) devem aparecer em destaque na lista.
-possível solução:
-  -ordenar a lista para ser exibida em ordem decrescente 5~1
-  -usar nome do responsável para desempate
 
 *Deve ser possível alterar o projeto. Campos que podem ser alterados: descrição, viabilidade, e situação.
   -conseguir uma forma de selecionar o projeto na lista
@@ -45,7 +45,7 @@ possível solução:
 * Projetos cancelados ou concluídos não podem ser alterados.
   -adicionar uma regra para bloquear a alteração, se cancelado ou concluído.
 
-* Deve ser possível filtrar os projetos por situação ou viabilidade ou data de início.
+OK{* Deve ser possível filtrar os projetos por situação ou viabilidade ou data de início.
   -criar 3 filtros, criar uma opção de filtro na tela inicial.
-
+}
 
