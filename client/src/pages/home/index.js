@@ -14,45 +14,54 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
-import makeStyles from '@material-ui/core/styles';
-import DataGrid from '@material-ui/data-grid';
-import format from 'date-fns';
+import format from 'date-fns/format';
+import parseISO from 'date-fns/parseISO'
 import pt from 'date-fns/locale/pt';
 
 class Page extends Component {
 
     state = {
         projectList: [],
-        viability: '1',
-        status: '1',
+        viability: '',
+        statusP: '',
     }
 
+    //OK
     async getProjectList() {
-        const response = await api.get("/api/get");
+        const response = await api.get("/api/getprojectlist");
         this.setState({
-            projectList: response.data.map((resp) => (
-                console.log(resp), {
-                    //EXEMPLO
-                    ...resp,
-                }))
+            projectList: response.data
         });
     }
-
-    async getProjectById(id) {
-        const response = await api.get("/api/getid", {
-            params: {
-                id: this.setState
-            }
-        })
-    }
-
-    async updateStatusProjectButton(id, status) {
-        const response = await api.put("/api/updatestatus", {
+    //OK
+    async updateStatusProjectButton(id, statusP) {
+        const response = await api.put("/api/updatestatusproject", {
             id: id,
-            status: status,
+            statusP: statusP,
         })
         this.getProjectList();
     }
+
+    //FALTA TERMINAR
+    async filterProjectList(viability, statusP) {
+        const response = await api.get("/api/filterProjectList", {
+            params: {
+                viability: viability,
+                statusP: statusP,
+                //startDate: this.startDate,
+            }
+        });
+        console.log(response.data, "eu aqui");
+        this.setState({
+            projectList: response.data
+        })
+    }
+
+    //FALTA TERMINAR
+    async redirectToUpdatePage(id) {
+
+    }
+
 
 
     componentDidMount() {
@@ -65,11 +74,10 @@ class Page extends Component {
 
     render() {
 
-
-
         const { projectList } = this.state;
         const { viability } = this.state;
-        const { status } = this.state;
+        const { statusP } = this.state;
+        const { startDate } = this.state;
 
         const registerButton = () => {
             window.location.href = "http://localhost:3000/registerproject";
@@ -82,7 +90,6 @@ class Page extends Component {
             { value: '4', label: '4' },
             { value: '5', label: '5' },
         ];
-
         const itemsStatus = [
             { value: '1', label: 'Planejado' },
             { value: '2', label: 'Em Desenvolvimento' },
@@ -93,67 +100,67 @@ class Page extends Component {
         const handleChangeViability = (event) => {
             this.setState({ viability: (event.target.value) });
         };
-
         const handleChangeStatus = (event) => {
-            this.setState({ status: (event.target.value) });
+            this.setState({ statusP: (event.target.value) });
         };
-
-
 
         return (
             <div>
-                <h1>Página Inicial</h1>
 
-                <Button variant="contained" onClick={registerButton}>
-                    Cadastrar novo Projeto
+                <ul className="form">
+
+                    <h1>Página Inicial</h1>
+
+                    <Button variant="contained" onClick={registerButton}>
+                        Cadastrar novo Projeto
                 </Button>
 
-                <TextField
-                    id="standard-select-currency"
-                    select
-                    label="Viabilidade"
-                    value={viability}
-                    onChange={handleChangeViability}
-                    defaultValue="1"
-                    helperText="1=Menos viável / 5=Mais viável"
-                >
-                    {itemsViability.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
-                </TextField>
+                    <TextField
+                        id="standard-select-currency"
+                        select
+                        label="Viabilidade"
+                        value={viability}
+                        onChange={handleChangeViability}
+                        defaultValue="1"
+                        helperText="1=Menos viável / 5=Mais viável"
+                    >
+                        {itemsViability.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
 
-                <TextField
-                    id="standard-select-currency"
-                    select
-                    label="Status"
-                    value={status}
-                    onChange={handleChangeStatus}
-                    defaultValue="1"
-                >
-                    {itemsStatus.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
-                </TextField>
+                    <TextField
+                        id="standard-select-currency"
+                        select
+                        label="Status"
+                        value={statusP}
+                        onChange={handleChangeStatus}
+                        defaultValue="1"
+                    >
+                        {itemsStatus.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
 
-                <TextField
-                    id="startDate"
-                    label="Data de Início"
-                    type="date"
-                    defaultValue="0000-00-00"
-                    InputLabelProps={{
-                        shrink: true,
-                    }} onChange={(event) => {
-                        this.setState({ startDate: (event.target.value) });
-                    }} />
+                    <TextField
+                        id="startDate"
+                        label="Data de Início"
+                        type="date"
+                        defaultValue="0000-00-00"
+                        InputLabelProps={{
+                            shrink: true,
+                        }} onChange={(event) => {
+                            this.setState({ startDate: (event.target.value) });
+                        }} />
 
-                <Button variant="contained" onClick={registerButton}>
-                    Filtrar
+                    <Button variant="contained" onClick={() => this.filterProjectList(viability, statusP)}>
+                        Filtrar
                 </Button>
-
+                </ul>
 
                 <TableContainer component={Paper}>
                     <Table size="small" aria-label="a dense table">
@@ -165,6 +172,7 @@ class Page extends Component {
                                 <TableCell align="right">Situação</TableCell>
                                 <TableCell align="right">Data de Início</TableCell>
                                 <TableCell align="right">Previsão de Término</TableCell>
+                                <TableCell align="right">Data de Registro</TableCell>
                                 <TableCell align="right">Data de Conclusão/Cancelamento</TableCell>
                                 <TableCell align="center">Ações</TableCell>
 
@@ -176,18 +184,33 @@ class Page extends Component {
                                     <TableCell align="right">{project.nameOwner}</TableCell>
                                     <TableCell align="right">{project.description}</TableCell>
                                     <TableCell align="right">{project.viability}</TableCell>
-                                    <TableCell align="right">{project.status}</TableCell>
-                                    <TableCell align="right">{project.startDate}</TableCell>
-                                    <TableCell align="right">{project.endDate}</TableCell>
-                                    <TableCell align="right">{project.ccDate}</TableCell>
+                                    <TableCell align="left">
+                                        {project.statusP == 1 ? 'Planejado' : '' ||
+                                            project.statusP == 2 ? 'Em Desenvolvimento' : '' ||
+                                                project.statusP == 3 ? 'Cancelado' : '' ||
+                                                    project.statusP == 4 ? 'Concluído' : ''
+                                        }
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {format(parseISO(project.startDate), 'dd/MM/yyyy', { locale: pt })}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {format(parseISO(project.endDate), 'dd/MM/yyyy', { locale: pt })}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {project.registerDate != null ? format(parseISO(project.registerDate), 'dd/MM/yyyy', { locale: pt }) : ''}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {project.ccDate != null ? format(parseISO(project.ccDate), 'dd/MM/yyyy', { locale: pt }) : ''}
+                                    </TableCell>
                                     <TableCell align="center">
-                                        <Button disabled={project.status >= 3}>
+                                        <Button disabled={project.statusP >= 3} onClick={() => this.redirectToUpdatePage(project.id)}>
                                             <EditIcon />
                                         </Button >
-                                        <Button disabled={project.status >= 3} onClick={() => this.updateStatusProjectButton(project.id, 4)}>
+                                        <Button disabled={project.statusP >= 3} onClick={() => this.updateStatusProjectButton(project.id, 4)}>
                                             <DoneAllIcon />
                                         </Button>
-                                        <Button disabled={project.status >= 3} onClick={() => this.updateStatusProjectButton(project.id, 3)}>
+                                        <Button disabled={project.statusP >= 3} onClick={() => this.updateStatusProjectButton(project.id, 3)}>
                                             <CancelIcon />
                                         </Button>
                                     </TableCell>

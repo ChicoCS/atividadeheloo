@@ -13,39 +13,47 @@ class Page extends Component {
         nameOwner: '',
         description: '',
         viability: '1',
-        status: '1',
+        statusP: '1',
         startDate: '',
         endDate: '',
         registerDate: '',
+        project: [],
     }
 
+    //FALTA TERMINAR
     async getProjectById(id) {
-        const response = await api.get("/api/getid", {
+        const response = await api.get("/api/getidproject", {
             params: {
-                id: this.setState
+                id: id,
             }
+        });
+        console.table(response.data, 'res')
+        this.setState({
+            project: response.data,
         })
+
     }
 
-    componentDidMount() {
+    componentDidUpdate() {
+        this.getProjectById()
     }
 
 
     render() {
 
 
+        const { project } = this.state;
+        console.log(project, 'euuu');
+
         const { projectList } = this.state;
-        //console.table(projectList);
         const { id } = this.state;
         const { nameOwner } = this.state;
         const { description } = this.state;
         const { viability } = this.state;
-        const { status } = this.state;
+        const { statusP } = this.state;
         const { startDate } = this.state;
         const { endDate } = this.state;
         const { registerDate } = this.state;
-
-        console.log(nameOwner, 'meuOVO');
 
         const itemsViability = [
             { value: '1', label: '1' },
@@ -67,19 +75,19 @@ class Page extends Component {
         };
 
         const handleChangeStatus = (event) => {
-            this.setState({ status: (event.target.value) });
+            this.setState({ statusP: (event.target.value) });
         };
 
         const submitData = () => {
             const date = format(new Date(), "yyyy-MM-dd", { locale: pt })
             this.setState({ registerDate: (date) });
-            api.post("/api/insert", {
+            api.post("/api/insertproject", {
                 nameOwner: nameOwner,
                 description: description,
                 viability: viability,
                 startDate: startDate,
                 endDate: endDate,
-                status: status,
+                statusP: statusP,
                 registerDate: registerDate,
             }).then(() => {
                 alert("Cadastrado com Sucesso");
@@ -90,6 +98,7 @@ class Page extends Component {
         return <div className="title">
             <h1>Atualizar Cadastro</h1>
 
+
             <div className="form">
                 <TextField disabled
                     id="outlined-basic"
@@ -97,7 +106,7 @@ class Page extends Component {
                     variant="outlined"
                     type="text"
                     name="nameOwner"
-                    value={nameOwner}
+                    value='aaa'
                     onChange={(event) => {
                         this.setState({ nameOwner: (event.target.value) });
                     }} />
@@ -135,7 +144,7 @@ class Page extends Component {
                     id="standard-select-currency"
                     select
                     label="Status"
-                    value={status}
+                    value={statusP}
                     onChange={handleChangeStatus}
                     defaultValue="1"
                 >
@@ -190,10 +199,9 @@ class Page extends Component {
                         this.setState({ endDate: (event.target.value) });
                     }} />
 
-                <Button variant="contained" color="primary" onClick={submitData}>
+                <Button variant="contained" color="primary" onClick={() => this.getProjectById(3)}>
                     Atualizar
             </Button>
-
             </div>
         </div >
     }

@@ -12,27 +12,24 @@ class Page extends Component {
         nameOwner: '',
         description: '',
         viability: '1',
-        status: '1',
+        statusP: '1',
         startDate: '',
         endDate: '',
         registerDate: '',
     }
 
     submitData = async (event) => {
-        event.preventDefault();
-
-        console.log('ashuash');
 
         const date = format(new Date(), "yyyy-MM-dd", { locale: pt })
         this.setState({ registerDate: (date) });
         try {
-            await api.post("/api/insert", {
+            await api.post("/api/insertproject", {
                 nameOwner: this.state.nameOwner,
                 description: this.state.description,
                 viability: this.state.viability,
                 startDate: this.state.startDate,
                 endDate: this.state.endDate,
-                status: this.state.status,
+                statusP: this.state.statusP,
                 registerDate: this.state.registerDate,
             })
         } catch (e) {
@@ -45,13 +42,13 @@ class Page extends Component {
 
     render() {
 
-        const { nameOwner } = this.state;
-        const { description } = this.state;
+        //const { nameOwner } = this.state;
+        //const { description } = this.state;
         const { viability } = this.state;
-        const { status } = this.state;
-        const { startDate } = this.state;
-        const { endDate } = this.state;
-        const { registerDate } = this.state;
+        const { statusP } = this.state;
+        //const { startDate } = this.state;
+        //const { endDate } = this.state;
+        //const { registerDate } = this.state;
 
 
         const itemsViability = [
@@ -74,7 +71,7 @@ class Page extends Component {
         };
 
         const handleChangeStatus = (event) => {
-            this.setState({ status: (event.target.value) });
+            this.setState({ statusP: (event.target.value) });
         };
 
 
@@ -126,7 +123,7 @@ class Page extends Component {
                     id="standard-select-currency"
                     select
                     label="Status"
-                    value={status}
+                    value={statusP}
                     onChange={handleChangeStatus}
                     defaultValue="1"
                 >
