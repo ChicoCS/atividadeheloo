@@ -1,5 +1,22 @@
 Objetivos
 
+urgente
+converter data
+
+TelaInicial
+  botão filtrar
+  botão editar
+
+TelaUpdate
+  Montar tela
+  capturar valor
+  encontrar uma forma de capturar ID
+
+banco
+  filtrar status
+  filtrar viability
+  filtrar startDate
+
 
 OK{ * Tela Inicial
     * Tela inicial deve listar os projetos ja cadastrados. Essa tela possui um botão para adicionar novo projeto.
@@ -48,4 +65,10 @@ OK}
 OK{* Deve ser possível filtrar os projetos por situação ou viabilidade ou data de início.
   -criar 3 filtros, criar uma opção de filtro na tela inicial.
 }
+
+3 buscas no banco
+
+situação select situation from banco WHERE situation=?
+viabilidade select situation from banco WHERE situation=?
+datainicio 
 

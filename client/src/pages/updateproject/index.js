@@ -19,15 +19,23 @@ class Page extends Component {
         registerDate: '',
     }
 
-    async componentDidMount() {
-        const response = await api.get("/api/get");
-        this.setState({ projectList: response.data });
+    async getProjectById(id) {
+        const response = await api.get("/api/getid", {
+            params: {
+                id: this.setState
+            }
+        })
+    }
+
+    componentDidMount() {
     }
 
 
     render() {
 
+
         const { projectList } = this.state;
+        //console.table(projectList);
         const { id } = this.state;
         const { nameOwner } = this.state;
         const { description } = this.state;
@@ -36,6 +44,8 @@ class Page extends Component {
         const { startDate } = this.state;
         const { endDate } = this.state;
         const { registerDate } = this.state;
+
+        console.log(nameOwner, 'meuOVO');
 
         const itemsViability = [
             { value: '1', label: '1' },
@@ -87,7 +97,7 @@ class Page extends Component {
                     variant="outlined"
                     type="text"
                     name="nameOwner"
-                    defaultValue={this.state.id}
+                    value={nameOwner}
                     onChange={(event) => {
                         this.setState({ nameOwner: (event.target.value) });
                     }} />

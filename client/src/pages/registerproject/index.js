@@ -18,6 +18,31 @@ class Page extends Component {
         registerDate: '',
     }
 
+    submitData = async (event) => {
+        event.preventDefault();
+
+        console.log('ashuash');
+
+        const date = format(new Date(), "yyyy-MM-dd", { locale: pt })
+        this.setState({ registerDate: (date) });
+        try {
+            await api.post("/api/insert", {
+                nameOwner: this.state.nameOwner,
+                description: this.state.description,
+                viability: this.state.viability,
+                startDate: this.state.startDate,
+                endDate: this.state.endDate,
+                status: this.state.status,
+                registerDate: this.state.registerDate,
+            })
+        } catch (e) {
+            console.log(e);
+        } finally {
+            window.location.href = "http://localhost:3000/";
+        }
+    };
+
+
     render() {
 
         const { nameOwner } = this.state;
@@ -27,6 +52,7 @@ class Page extends Component {
         const { startDate } = this.state;
         const { endDate } = this.state;
         const { registerDate } = this.state;
+
 
         const itemsViability = [
             { value: '1', label: '1' },
@@ -51,24 +77,7 @@ class Page extends Component {
             this.setState({ status: (event.target.value) });
         };
 
-        const submitData = () => {
-            const date = format(new Date(), "yyyy-MM-dd", { locale: pt })
-            this.setState({ registerDate: (date) });
-            api.post("/api/insert", {
-                nameOwner: nameOwner,
-                description: description,
-                viability: viability,
-                startDate: startDate,
-                endDate: endDate,
-                status: status,
-                registerDate: registerDate,
-            }).then((response) => {
-                console.log(response);
-            }, (error) => {
-                console.log(error);
-            });
-            //window.location.href = "http://localhost:3000/";
-        };
+
 
 
         return <div className="title">
@@ -150,9 +159,9 @@ class Page extends Component {
                         this.setState({ endDate: (event.target.value) });
                     }} />
 
-                <Button variant="contained" color="primary" disableElevation onClick={submitData}>
+                <Button variant="contained" color="primary" disableElevation onClick={this.submitData}>
                     Cadastrar
-            </Button>
+                </Button>
 
             </div>
         </div >

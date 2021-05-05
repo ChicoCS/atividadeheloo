@@ -29,6 +29,30 @@ app.get("/api/get", (req, res) => {
         })
 });
 
+app.put('/api/updatestatus', (req, res) => {
+
+    const id = req.body.id;
+    const status = req.body.status;
+
+    const sqlUpdate = "UPDATE dbproject.project SET `status`=? WHERE  `id`=?;"
+    conect.query(sqlUpdate, [status, id])
+        .then(conn => {
+            console.log();
+        })
+        .catch(err => {
+            //handle error
+        });
+});
+
+//ID
+/*app.get("/api/getid", (req, res) => {
+    const sqlSelect = "SELECT * FROM dbproject.project WHERE id=?";
+    conect.query(sqlSelect, id)
+        .then(result => {
+            res.send(result);
+        })
+});*/
+
 
 //INSERIR
 app.post("/api/insert", (req, res) => {
