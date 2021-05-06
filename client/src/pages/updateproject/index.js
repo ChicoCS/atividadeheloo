@@ -1,59 +1,53 @@
-import React, { Component } from "react";
+import React, { useState, Component } from "react";
 import api from '../services/api'
 import { TextField, Button } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import './styles.css';
 
 class Page extends Component {
 
     state = {
-        id: '1',
-        nameOwner: '',
-        description: '',
-        viability: '1',
-        statusP: '1',
-        startDate: '',
-        endDate: '',
-        registerDate: '',
         project: [],
+        id: '57',
+        ccDate: '',
+        viability: '',
+        status: '',
     }
 
     //FALTA TERMINAR
-    async getProjectById(id) {
+    async getProjectById() {
         const response = await api.get("/api/getidproject", {
             params: {
-                id: id,
+                id: this.state.id,
             }
         });
-        console.table(response.data, 'res')
+        console.log(response.data, 'response')
         this.setState({
             project: response.data,
         })
-
     }
 
-    componentDidUpdate() {
+    async submitData(id, viability, statusP) {
+        api.put("/api/updateproject", {
+            id: this.state.id,
+            description: this.state.description,
+            viability: viability,
+            statusP: statusP,
+        }).then(() => {
+            alert("Cadastrado com Sucesso");
+        })
+    };
+
+    componentDidMount() {
         this.getProjectById()
     }
 
 
     render() {
 
-
         const { project } = this.state;
-        console.log(project, 'euuu');
-
-        const { projectList } = this.state;
-        const { id } = this.state;
-        const { nameOwner } = this.state;
-        const { description } = this.state;
-        const { viability } = this.state;
-        const { statusP } = this.state;
-        const { startDate } = this.state;
-        const { endDate } = this.state;
-        const { registerDate } = this.state;
 
         const itemsViability = [
             { value: '1', label: '1' },
@@ -78,131 +72,116 @@ class Page extends Component {
             this.setState({ statusP: (event.target.value) });
         };
 
-        const submitData = () => {
-            const date = format(new Date(), "yyyy-MM-dd", { locale: pt })
-            this.setState({ registerDate: (date) });
-            api.post("/api/insertproject", {
-                nameOwner: nameOwner,
-                description: description,
-                viability: viability,
-                startDate: startDate,
-                endDate: endDate,
-                statusP: statusP,
-                registerDate: registerDate,
-            }).then(() => {
-                alert("Cadastrado com Sucesso");
-            })
-        };
-
 
         return <div className="title">
             <h1>Atualizar Cadastro</h1>
 
+            {project.map((project) => (
+                <div className="form">
+                    <TextField disabled
+                        id="outlined-basic"
+                        label="Nome do Responsável"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        type="text"
+                        name="nameOwner"
+                        value={project.nameOwner}
+                    />
 
-            <div className="form">
-                <TextField disabled
-                    id="outlined-basic"
-                    label="Nome do Responsável"
-                    variant="outlined"
-                    type="text"
-                    name="nameOwner"
-                    value='aaa'
-                    onChange={(event) => {
-                        this.setState({ nameOwner: (event.target.value) });
-                    }} />
+                    <TextField
+                        id="outlined-multiline-static"
+                        label="Descrição do Projeto"
+                        multiline
+                        rows={4}
+                        variant="outlined"
+                        fullWidth
+                        type="text"
+                        name="description"
+                        defaultValue={project.description}
+                        onChange={(event) => {
+                            this.setState({ description: (event.target.value) });
+                        }} />
 
-                <TextField
-                    id="outlined-multiline-static"
-                    label="Descrição do Projeto"
-                    multiline
-                    rows={4}
-                    variant="outlined"
-                    type="text"
-                    name="description"
-                    defaultValue={this.state.id}
-                    onChange={(event) => {
-                        this.setState({ description: (event.target.value) });
-                    }} />
+                    <TextField
+                        id="standard-select-currency"
+                        select
+                        label="Viabilidade"
+                        size="small"
+                        value={project.viability}
+                        onChange={handleChangeViability}
+                        defaultValue="1"
+                        helperText="1=Menos viável / 5=Mais viável"
+                    >
+                        {itemsViability.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
 
-                <TextField
-                    id="standard-select-currency"
-                    select
-                    label="Viabilidade"
-                    value={viability}
-                    onChange={handleChangeViability}
-                    defaultValue="1"
-                    helperText="1=Menos viável / 5=Mais viável"
-                >
-                    {itemsViability.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
-                </TextField>
+                    <TextField
+                        id="standard-select-currency"
+                        select
+                        label="Status"
+                        size="small"
+                        value={project.statusP}
+                        onChange={handleChangeStatus}
+                        defaultValue="1"
+                    >
+                        {itemsStatus.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
 
-                <TextField
-                    id="standard-select-currency"
-                    select
-                    label="Status"
-                    value={statusP}
-                    onChange={handleChangeStatus}
-                    defaultValue="1"
-                >
-                    {itemsStatus.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
-                </TextField>
+                    <TextField disabled
+                        id="outlined-basic"
+                        label="Data de Início"
+                        variant="outlined"
+                        size="small"
+                        type="text"
+                        name="startDate"
+                        value={format(parseISO(project.startDate), 'dd/MM/yyyy', { locale: pt })}
+                    />
 
-                <TextField disabled
-                    id="startDate"
-                    label="Data de Início"
-                    type="date"
-                    defaultValue="0000-00-00"
-                    InputLabelProps={{
-                        shrink: true,
-                    }} onChange={(event) => {
-                        this.setState({ startDate: (event.target.value) });
-                    }} />
+                    <TextField disabled
+                        id="outlined-basic"
+                        label="Previsão Data Final"
+                        variant="outlined"
+                        size="small"
+                        type="text"
+                        name="endDate"
+                        value={format(parseISO(project.endDate), 'dd/MM/yyyy', { locale: pt })}
+                    />
 
-                <TextField disabled
-                    id="endDate"
-                    label="Previsão Data Final"
-                    type="date"
-                    defaultValue="0000-00-00"
-                    InputLabelProps={{
-                        shrink: true,
-                    }} onChange={(event) => {
-                        this.setState({ endDate: (event.target.value) });
-                    }} />
+                    <TextField disabled
+                        id="outlined-basic"
+                        label="Data de Registro"
+                        variant="outlined"
+                        size="small"
+                        type="text"
+                        name="registerDate"
+                        value={format(parseISO(project.registerDate), 'dd/MM/yyyy', { locale: pt })}
+                    />
 
-                <TextField disabled
-                    id="registerDate"
-                    label="Data de Registro"
-                    type="date"
-                    defaultValue="0000-00-00"
-                    InputLabelProps={{
-                        shrink: true,
-                    }} onChange={(event) => {
-                        this.setState({ endDate: (event.target.value) });
-                    }} />
+                    <TextField disabled
+                        id="outlined-basic"
+                        label="Data de Conclusão/Cancelamento"
+                        variant="outlined"
+                        size="small"
+                        type="text"
+                        name="ccDate"
+                        value={format(parseISO(project.ccDate), 'dd/MM/yyyy', { locale: pt })}
+                    />
 
-                <TextField disabled
-                    id="ccDate"
-                    label="data conclusão / cancelamento"
-                    type="date"
-                    defaultValue="0000-00-00"
-                    InputLabelProps={{
-                        shrink: true,
-                    }} onChange={(event) => {
-                        this.setState({ endDate: (event.target.value) });
-                    }} />
+                    <Button variant="contained" color="primary" onClick={() => this.submitData(57, project.viability, project.statusP)}>
+                        Atualizar
+                    </Button>
 
-                <Button variant="contained" color="primary" onClick={() => this.getProjectById(3)}>
-                    Atualizar
-            </Button>
-            </div>
+                </div>
+            ))}
         </div >
     }
 }

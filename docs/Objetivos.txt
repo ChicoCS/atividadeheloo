@@ -1,21 +1,10 @@
 Objetivos
 
-urgente
-converter data
+----fazer os LInks entre as telas
+----Botão editar - página inicial
+----capturar dados do ID e distribuir na tela TelaUpdate
+----capturar ID da tela inicial para tela update
 
-TelaInicial
-  botão filtrar
-  botão editar
-
-TelaUpdate
-  Montar tela
-  capturar valor
-  encontrar uma forma de capturar ID
-
-banco
-  filtrar status
-  filtrar viability
-  filtrar startDate
 
 
 OK{ * Tela Inicial

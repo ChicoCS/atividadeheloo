@@ -29,30 +29,93 @@ app.get("/api/getprojectlist", (req, res) => {
         })
 });
 
-//FILTRAR FALTA TERMINAR
+//FILTRAR
 app.get("/api/filterprojectList", (req, res) => {
     let viability = req.query.viability;
     let statusP = req.query.statusP;
-    console.log(viability, "=viabilidade", statusP, "=status")
-    //let startDate = req.query.startDate;
+    let startDate = req.query.startDate;
+    console.log(viability, "=viabilidade", statusP, "=status", "data=", startDate)
 
-    const sqlSelect = "SELECT * FROM dbproject.project WHERE viability=? AND statusP=?";
-    conect.query(sqlSelect, [viability, statusP])
-        .then(response => {
-            console.log("filtro passou");
-        })
-        .catch(error => {
-            console.log("filtro não passou");
-        });
+    if (viability > 0 && statusP > 0 && startDate != undefined) {
+        const sqlSelect = "SELECT * FROM dbproject.project WHERE viability=? AND statusP=? AND startDate=?";
+        conect.query(sqlSelect, [viability, statusP, startDate])
+            .then(result => {
+                res.send(result);
+                console.log("filtro passou");
+            })
+            .catch(error => {
+                console.log("filtro não passou");
+            });
+    } else if (statusP == 0 && startDate == undefined) {
+        sqlSelect = "SELECT * FROM dbproject.project WHERE viability=?";
+        conect.query(sqlSelect, [viability])
+            .then(result => {
+                res.send(result);
+                console.log("filtro passou");
+            })
+            .catch(error => {
+                console.log("filtro não passou");
+            });
+    } else if (viability == 0 && startDate == undefined) {
+        sqlSelect = "SELECT * FROM dbproject.project WHERE statusP=?";
+        conect.query(sqlSelect, [statusP])
+            .then(result => {
+                res.send(result);
+                console.log("filtro passou");
+            })
+            .catch(error => {
+                console.log("filtro não passou");
+            });
+    } else if (viability == 0 && statusP == 0) {
+        sqlSelect = "SELECT * FROM dbproject.project WHERE startDate=?";
+        conect.query(sqlSelect, [startDate])
+            .then(result => {
+                res.send(result);
+                console.log("filtro passou");
+            })
+            .catch(error => {
+                console.log("filtro não passou");
+            });
+    } else if (startDate == undefined) {
+        sqlSelect = "SELECT * FROM dbproject.project WHERE viability=? AND statusP=?";
+        conect.query(sqlSelect, [viability, statusP])
+            .then(result => {
+                res.send(result);
+                console.log("filtro passou");
+            })
+            .catch(error => {
+                console.log("filtro não passou");
+            });
+    } else if (statusP == 0) {
+        sqlSelect = "SELECT * FROM dbproject.project WHERE viability=? AND startDate=?";
+        conect.query(sqlSelect, [viability, startDate])
+            .then(result => {
+                res.send(result);
+                console.log("filtro passou");
+            })
+            .catch(error => {
+                console.log("filtro não passou");
+            });
+    } else if (viability == 0) {
+        sqlSelect = "SELECT * FROM dbproject.project WHERE statusP=? AND startDate=?";
+        conect.query(sqlSelect, [statusP, startDate])
+            .then(result => {
+                res.send(result);
+                console.log("filtro passou");
+            })
+            .catch(error => {
+                console.log("filtro não passou");
+            });
+    }
 });
 
 //UPDATEPROJECT FALTA VERIFICAR
 app.put('/api/updateproject', (req, res) => {
-    const id = req.body.id;
+    const id = req.query.id;
     const description = req.body.description;
     const viability = req.body.viability;
     const statusP = req.body.statusP;
-    const sqlUpdate = "UPDATE dbproject.project SET `description`=? `viability`=? `statusP`=? WHERE  `id`=?;"
+    const sqlUpdate = "UPDATE dbproject.project SET `description`=?, `viability`=?, `statusP`=? WHERE  `id`=?;"
     conect.query(sqlUpdate, [description, viability, statusP, id])
         .then(response => {
             console.log(response, "editou");
@@ -66,8 +129,10 @@ app.put('/api/updateproject', (req, res) => {
 app.put('/api/updatestatusproject', (req, res) => {
     const id = req.body.id;
     const statusP = req.body.statusP;
-    const sqlUpdate = "UPDATE dbproject.project SET `statusP`=? WHERE  `id`=?;"
-    conect.query(sqlUpdate, [statusP, id])
+    const ccDate = req.body.ccDate;
+    console.log('ccDate=', ccDate, "id=", id, 'statusP=', statusP)
+    const sqlUpdate = "UPDATE dbproject.project SET `statusP`=?, `ccDate`=? WHERE  `id`=?;"
+    conect.query(sqlUpdate, [statusP, ccDate, id])
         .then(response => {
             console.log(response);
         })
@@ -76,16 +141,17 @@ app.put('/api/updatestatusproject', (req, res) => {
         });
 });
 
-//GETID FALTA VERIFICAR
+//GETID
 app.get('/api/getidproject', (req, res) => {
     let id = req.query.id;
-    const sqlSelect = "SELECT * FROM dbproject.project WHERE  id=?"
+    const sqlSelect = "SELECT * FROM dbproject.project WHERE id=?"
     conect.query(sqlSelect, [id])
-        .then(response => {
-            console.log(response, "passou");
+        .then(result => {
+            res.send(result);
+            console.log(response, "Pegou");
         })
         .catch(error => {
-            console.log(error, " não passou");
+            console.log(error, " não PEGOu");
         });
 });
 

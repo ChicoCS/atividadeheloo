@@ -3,7 +3,6 @@ import api from '../services/api'
 import { TextField, Button } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import { format } from 'date-fns';
-import pt from 'date-fns/locale/pt';
 import './styles.css';
 
 class Page extends Component {
@@ -15,28 +14,24 @@ class Page extends Component {
         statusP: '1',
         startDate: '',
         endDate: '',
-        registerDate: '',
+        registerDate: format((new Date()), "yyyy/MM/dd"),
     }
 
-    submitData = async (event) => {
-
-        const date = format(new Date(), "yyyy-MM-dd", { locale: pt })
-        this.setState({ registerDate: (date) });
-        try {
-            await api.post("/api/insertproject", {
-                nameOwner: this.state.nameOwner,
-                description: this.state.description,
-                viability: this.state.viability,
-                startDate: this.state.startDate,
-                endDate: this.state.endDate,
-                statusP: this.state.statusP,
-                registerDate: this.state.registerDate,
-            })
-        } catch (e) {
-            console.log(e);
-        } finally {
-            window.location.href = "http://localhost:3000/";
-        }
+    submitData = async () => {
+        await api.post("/api/insertproject", {
+            nameOwner: this.state.nameOwner,
+            description: this.state.description,
+            viability: this.state.viability,
+            startDate: this.state.startDate,
+            endDate: this.state.endDate,
+            statusP: this.state.statusP,
+            registerDate: this.state.registerDate,
+        }).then(response => {
+            console.log(response, "passou");
+        })
+            .catch(error => {
+                console.log(error);
+            });
     };
 
 
@@ -52,6 +47,7 @@ class Page extends Component {
 
 
         const itemsViability = [
+
             { value: '1', label: '1' },
             { value: '2', label: '2' },
             { value: '3', label: '3' },

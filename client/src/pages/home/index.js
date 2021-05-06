@@ -22,38 +22,39 @@ class Page extends Component {
 
     state = {
         projectList: [],
-        viability: '',
-        statusP: '',
+        viability: '0',
+        statusP: '0',
+        ccDate: format((new Date()), "yyyy/MM/dd"),
     }
 
     //OK
-    async getProjectList() {
-        const response = await api.get("/api/getprojectlist");
-        this.setState({
-            projectList: response.data
-        });
+    async getProjectList(action) {
+        if (action == 0) {
+            const response = await api.get("/api/getprojectlist");
+            this.setState({
+                projectList: response.data
+            });
+        } else if (action == 1 || action == null) {
+            action = 2;
+            const response = await api.get("/api/filterProjectList", {
+                params: {
+                    viability: this.state.viability,
+                    statusP: this.state.statusP,
+                    startDate: this.state.startDate
+                }
+            });
+            this.setState({
+                projectList: response.data
+            });
+        }
     }
+
     //OK
     async updateStatusProjectButton(id, statusP) {
         const response = await api.put("/api/updatestatusproject", {
             id: id,
             statusP: statusP,
-        })
-        this.getProjectList();
-    }
-
-    //FALTA TERMINAR
-    async filterProjectList(viability, statusP) {
-        const response = await api.get("/api/filterProjectList", {
-            params: {
-                viability: viability,
-                statusP: statusP,
-                //startDate: this.startDate,
-            }
-        });
-        console.log(response.data, "eu aqui");
-        this.setState({
-            projectList: response.data
+            ccDate: this.state.ccDate,
         })
     }
 
@@ -62,14 +63,12 @@ class Page extends Component {
 
     }
 
-
-
     componentDidMount() {
-        this.getProjectList();
+        this.getProjectList(0);
     }
 
     componentDidUpdate() {
-        this.getProjectList();
+        this.getProjectList(2);
     }
 
     render() {
@@ -78,12 +77,14 @@ class Page extends Component {
         const { viability } = this.state;
         const { statusP } = this.state;
         const { startDate } = this.state;
+        const { ccDate } = this.state;
 
         const registerButton = () => {
             window.location.href = "http://localhost:3000/registerproject";
         };
 
         const itemsViability = [
+            { value: '0', label: 'Todos' },
             { value: '1', label: '1' },
             { value: '2', label: '2' },
             { value: '3', label: '3' },
@@ -91,6 +92,7 @@ class Page extends Component {
             { value: '5', label: '5' },
         ];
         const itemsStatus = [
+            { value: '0', label: 'Todos' },
             { value: '1', label: 'Planejado' },
             { value: '2', label: 'Em Desenvolvimento' },
             { value: '3', label: 'Cancelado' },
@@ -108,58 +110,62 @@ class Page extends Component {
             <div>
 
                 <ul className="form">
-
                     <h1>Página Inicial</h1>
 
                     <Button variant="contained" onClick={registerButton}>
                         Cadastrar novo Projeto
+                     </Button>
+                    <ul>
+                        <TextField
+                            id="standard-select-currency"
+                            select
+                            label="Viabilidade"
+                            value={viability}
+                            onChange={handleChangeViability}
+                            defaultValue="1"
+                            helperText="1=Menos viável / 5=Mais viável"
+                        >
+                            {itemsViability.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+
+                        <TextField
+                            id="standard-select-currency"
+                            select
+                            label="Status"
+                            value={statusP}
+                            onChange={handleChangeStatus}
+                            defaultValue="1"
+                        >
+                            {itemsStatus.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+
+                        <TextField
+                            id="startDate"
+                            label="Data de Início"
+                            type="date"
+                            defaultValue="0000-00-00"
+                            InputLabelProps={{
+                                shrink: true,
+                            }} onChange={(event) => {
+                                this.setState({ startDate: (event.target.value) });
+                            }} />
+                    </ul>
+                    <ul>
+                        <Button variant="contained" onClick={() => this.getProjectList(1)}>
+                            Filtrar
                 </Button>
-
-                    <TextField
-                        id="standard-select-currency"
-                        select
-                        label="Viabilidade"
-                        value={viability}
-                        onChange={handleChangeViability}
-                        defaultValue="1"
-                        helperText="1=Menos viável / 5=Mais viável"
-                    >
-                        {itemsViability.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-
-                    <TextField
-                        id="standard-select-currency"
-                        select
-                        label="Status"
-                        value={statusP}
-                        onChange={handleChangeStatus}
-                        defaultValue="1"
-                    >
-                        {itemsStatus.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-
-                    <TextField
-                        id="startDate"
-                        label="Data de Início"
-                        type="date"
-                        defaultValue="0000-00-00"
-                        InputLabelProps={{
-                            shrink: true,
-                        }} onChange={(event) => {
-                            this.setState({ startDate: (event.target.value) });
-                        }} />
-
-                    <Button variant="contained" onClick={() => this.filterProjectList(viability, statusP)}>
-                        Filtrar
+                        <Button variant="contained" onClick={() => this.getProjectList(0)}>
+                            Limpar Filtro
                 </Button>
+                    </ul>
                 </ul>
 
                 <TableContainer component={Paper}>
