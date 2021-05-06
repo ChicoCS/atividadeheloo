@@ -17,6 +17,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO'
 import pt from 'date-fns/locale/pt';
+import { Redirect } from 'react-router-dom'
 
 class Page extends Component {
 
@@ -25,6 +26,7 @@ class Page extends Component {
         viability: '0',
         statusP: '0',
         ccDate: format((new Date()), "yyyy/MM/dd"),
+        redirect: null,
     }
 
     //OK
@@ -56,6 +58,7 @@ class Page extends Component {
             statusP: statusP,
             ccDate: this.state.ccDate,
         })
+        this.getProjectList(0);
     }
 
     //FALTA TERMINAR
@@ -68,20 +71,19 @@ class Page extends Component {
     }
 
     componentDidUpdate() {
-        this.getProjectList(2);
     }
 
     render() {
 
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect} />
+        }
+
         const { projectList } = this.state;
         const { viability } = this.state;
         const { statusP } = this.state;
-        const { startDate } = this.state;
-        const { ccDate } = this.state;
-
-        const registerButton = () => {
-            window.location.href = "http://localhost:3000/registerproject";
-        };
+        // const { startDate } = this.state;
+        // const { ccDate } = this.state;
 
         const itemsViability = [
             { value: '0', label: 'Todos' },
@@ -99,6 +101,9 @@ class Page extends Component {
             { value: '4', label: 'Concluído' },
         ];
 
+        const registerButton = () => {
+            window.location.href = "http://localhost:3000/registerproject";
+        };
         const handleChangeViability = (event) => {
             this.setState({ viability: (event.target.value) });
         };
@@ -108,7 +113,6 @@ class Page extends Component {
 
         return (
             <div>
-
                 <ul className="form">
                     <h1>Página Inicial</h1>
 
@@ -171,25 +175,26 @@ class Page extends Component {
                 <TableContainer component={Paper}>
                     <Table size="small" aria-label="a dense table">
                         <TableHead>
-                            <TableRow>
-                                <TableCell align="right"> Nome do Responsável</TableCell>
-                                <TableCell align="right">Descrição</TableCell>
-                                <TableCell align="right">Viabilidade</TableCell>
-                                <TableCell align="right">Situação</TableCell>
-                                <TableCell align="right">Data de Início</TableCell>
-                                <TableCell align="right">Previsão de Término</TableCell>
-                                <TableCell align="right">Data de Registro</TableCell>
-                                <TableCell align="right">Data de Conclusão/Cancelamento</TableCell>
+                            <TableRow style={{ backgroundColor: '#4da6ff' }}>
+                                <TableCell align="left">Nome do Responsável</TableCell>
+                                <TableCell align="left">Descrição</TableCell>
+                                <TableCell align="left">Viabilidade</TableCell>
+                                <TableCell align="left">Situação</TableCell>
+                                <TableCell align="left">Valor de Execução</TableCell>
+                                <TableCell align="left">Data de Início</TableCell>
+                                <TableCell align="left">Previsão de Término</TableCell>
+                                <TableCell align="left">Data de Registro</TableCell>
+                                <TableCell align="left">Data de Conclusão/Cancelamento</TableCell>
                                 <TableCell align="center">Ações</TableCell>
 
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {projectList.map((project) => (
-                                <TableRow style={{ backgroundColor: project.viability == 5 ? '#ddd' : '' }} key={project.id}>
-                                    <TableCell align="right">{project.nameOwner}</TableCell>
-                                    <TableCell align="right">{project.description}</TableCell>
-                                    <TableCell align="right">{project.viability}</TableCell>
+                                <TableRow style={{ backgroundColor: project.viability == 5 ? '#80ff80' : '' }} key={project.id}>
+                                    <TableCell align="left">{project.nameOwner}</TableCell>
+                                    <TableCell align="left">{project.description}</TableCell>
+                                    <TableCell align="center">{project.viability}</TableCell>
                                     <TableCell align="left">
                                         {project.statusP == 1 ? 'Planejado' : '' ||
                                             project.statusP == 2 ? 'Em Desenvolvimento' : '' ||
@@ -197,16 +202,17 @@ class Page extends Component {
                                                     project.statusP == 4 ? 'Concluído' : ''
                                         }
                                     </TableCell>
+                                    <TableCell align="right">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(project.valueP)}</TableCell>
                                     <TableCell align="right">
                                         {format(parseISO(project.startDate), 'dd/MM/yyyy', { locale: pt })}
                                     </TableCell>
                                     <TableCell align="right">
                                         {format(parseISO(project.endDate), 'dd/MM/yyyy', { locale: pt })}
                                     </TableCell>
-                                    <TableCell align="right">
+                                    <TableCell align="center">
                                         {project.registerDate != null ? format(parseISO(project.registerDate), 'dd/MM/yyyy', { locale: pt }) : ''}
                                     </TableCell>
-                                    <TableCell align="right">
+                                    <TableCell align="center">
                                         {project.ccDate != null ? format(parseISO(project.ccDate), 'dd/MM/yyyy', { locale: pt }) : ''}
                                     </TableCell>
                                     <TableCell align="center">

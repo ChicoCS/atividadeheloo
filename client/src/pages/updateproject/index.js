@@ -1,7 +1,12 @@
 import React, { useState, Component } from "react";
 import api from '../services/api'
-import { TextField, Button } from '@material-ui/core';
+import { Redirect } from 'react-router-dom'
+import { Button } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
+import Input from '@material-ui/core/Input';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
 import { format, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import './styles.css';
@@ -10,10 +15,9 @@ class Page extends Component {
 
     state = {
         project: [],
-        id: '57',
-        ccDate: '',
-        viability: '',
-        status: '',
+        id: '17',
+        ccDate: format((new Date()), "yyyy/MM/dd"),
+        redirect: null,
     }
 
     //FALTA TERMINAR
@@ -29,15 +33,18 @@ class Page extends Component {
         })
     }
 
-    async submitData(id, viability, statusP) {
+    async submitData(viability, statusP, id) {
         api.put("/api/updateproject", {
-            id: this.state.id,
+            id: id,
             description: this.state.description,
             viability: viability,
             statusP: statusP,
-        }).then(() => {
-            alert("Cadastrado com Sucesso");
+            ccDate: this.state.ccDate,
+        }).then((res) => {
+            alert("Alteração Realizada com Sucesso");
+            this.setState({ redirect: "/" });
         })
+
     };
 
     componentDidMount() {
@@ -47,22 +54,15 @@ class Page extends Component {
 
     render() {
 
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect} />
+        }
+
         const { project } = this.state;
-
-        const itemsViability = [
-            { value: '1', label: '1' },
-            { value: '2', label: '2' },
-            { value: '3', label: '3' },
-            { value: '4', label: '4' },
-            { value: '5', label: '5' },
-        ];
-
-        const itemsStatus = [
-            { value: '1', label: 'Planejado' },
-            { value: '2', label: 'Em Desenvolvimento' },
-            { value: '3', label: 'Cancelado' },
-            { value: '4', label: 'Concluído' },
-        ];
+        const { id } = this.state;
+        const { description } = this.state;
+        const { viability } = this.state;
+        const { statusP } = this.state;
 
         const handleChangeViability = (event) => {
             this.setState({ viability: (event.target.value) });
@@ -78,105 +78,100 @@ class Page extends Component {
 
             {project.map((project) => (
                 <div className="form">
-                    <TextField disabled
-                        id="outlined-basic"
-                        label="Nome do Responsável"
-                        variant="outlined"
-                        size="small"
-                        fullWidth
-                        type="text"
-                        name="nameOwner"
-                        value={project.nameOwner}
-                    />
 
-                    <TextField
-                        id="outlined-multiline-static"
-                        label="Descrição do Projeto"
-                        multiline
-                        rows={4}
-                        variant="outlined"
-                        fullWidth
-                        type="text"
-                        name="description"
-                        defaultValue={project.description}
-                        onChange={(event) => {
-                            this.setState({ description: (event.target.value) });
-                        }} />
+                    <FormControl fullWidth>
+                        <InputLabel htmlFor="nameOwner">Nome do Responsável</InputLabel>
+                        <Input
+                            id="nameOwner"
+                            type="text"
+                            value={project.nameOwner}
+                        />
+                    </FormControl>
 
-                    <TextField
-                        id="standard-select-currency"
-                        select
-                        label="Viabilidade"
-                        size="small"
-                        value={project.viability}
-                        onChange={handleChangeViability}
-                        defaultValue="1"
-                        helperText="1=Menos viável / 5=Mais viável"
-                    >
-                        {itemsViability.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                    <FormControl fullWidth>
+                        <InputLabel htmlFor="description">Descrição do Projeto</InputLabel>
+                        <Input
+                            id="description"
+                            type="text"
+                            multiline
+                            rows={4}
+                            defaultValue={project.description}
+                            value={description}
+                            onChange={(event) => {
+                                this.setState({ description: (event.target.value) })
+                            }}
+                        />
+                    </FormControl>
 
-                    <TextField
-                        id="standard-select-currency"
-                        select
-                        label="Status"
-                        size="small"
-                        value={project.statusP}
-                        onChange={handleChangeStatus}
-                        defaultValue="1"
-                    >
-                        {itemsStatus.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                    <FormControl fullWidth >
+                        <InputLabel htmlFor="valueP">Valor de Execução</InputLabel>
+                        <Input
+                            id="valueP"
+                            type="text"
+                            value={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(project.valueP)} />
+                    </FormControl>
 
-                    <TextField disabled
-                        id="outlined-basic"
-                        label="Data de Início"
-                        variant="outlined"
-                        size="small"
-                        type="text"
-                        name="startDate"
-                        value={format(parseISO(project.startDate), 'dd/MM/yyyy', { locale: pt })}
-                    />
+                    <FormControl >
+                        <InputLabel id="viability label">Viabilidade</InputLabel>
+                        <Select
+                            labelId="viability-label"
+                            id="viability label"
+                            defaultValue={project.viability}
+                            value={viability}
+                            onChange={handleChangeViability}
+                        >
+                            <MenuItem value={1}>1</MenuItem>
+                            <MenuItem value={2}>2</MenuItem>
+                            <MenuItem value={3}>3</MenuItem>
+                            <MenuItem value={4}>4</MenuItem>
+                            <MenuItem value={5}>5</MenuItem>
+                        </Select>
+                    </FormControl>
 
-                    <TextField disabled
-                        id="outlined-basic"
-                        label="Previsão Data Final"
-                        variant="outlined"
-                        size="small"
-                        type="text"
-                        name="endDate"
-                        value={format(parseISO(project.endDate), 'dd/MM/yyyy', { locale: pt })}
-                    />
+                    <FormControl >
+                        <InputLabel id="statusP label">Situação</InputLabel>
+                        <Select
+                            labelId="statusP-label"
+                            id="statusP label"
+                            defaultValue={project.statusP}
+                            value={statusP}
+                            onChange={handleChangeStatus}
+                        >
+                            <MenuItem value={1}>Planejado</MenuItem>
+                            <MenuItem value={2}>Em Desenvolvimento</MenuItem>
+                            <MenuItem value={3}>Cancelado</MenuItem>
+                            <MenuItem value={4}>Concluído</MenuItem>
+                        </Select>
+                    </FormControl>
 
-                    <TextField disabled
-                        id="outlined-basic"
-                        label="Data de Registro"
-                        variant="outlined"
-                        size="small"
-                        type="text"
-                        name="registerDate"
-                        value={format(parseISO(project.registerDate), 'dd/MM/yyyy', { locale: pt })}
-                    />
+                    <FormControl >
+                        <InputLabel htmlFor="startDate">Data de Início</InputLabel>
+                        <Input
+                            id="startDate"
+                            type="text"
+                            value={format(parseISO(project.startDate), 'dd/MM/yyyy', { locale: pt })}
+                        />
+                    </FormControl>
 
-                    <TextField disabled
-                        id="outlined-basic"
-                        label="Data de Conclusão/Cancelamento"
-                        variant="outlined"
-                        size="small"
-                        type="text"
-                        name="ccDate"
-                        value={format(parseISO(project.ccDate), 'dd/MM/yyyy', { locale: pt })}
-                    />
+                    <FormControl >
+                        <InputLabel htmlFor="endDate">Data Fim Prevista</InputLabel>
+                        <Input
+                            id="endDate"
+                            type="text"
+                            value={format(parseISO(project.endDate), 'dd/MM/yyyy', { locale: pt })}
+                        />
+                    </FormControl>
 
-                    <Button variant="contained" color="primary" onClick={() => this.submitData(57, project.viability, project.statusP)}>
+                    <FormControl >
+                        <InputLabel htmlFor="registerDate">Data de Registro</InputLabel>
+                        <Input
+                            id="registerDate"
+                            type="text"
+                            value={format(parseISO(project.registerDate), 'dd/MM/yyyy', { locale: pt })}
+                        />
+                    </FormControl>
+
+                    <Button variant="contained" color="primary" onClick={() => this.submitData(viability, statusP, project.id)}>
                         Atualizar
                     </Button>
 
