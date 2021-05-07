@@ -14,7 +14,7 @@ function Routes() {
                 <Route exact path="/registerproject">
                     <Register />
                 </Route>
-                <Route exact path="/updateproject">
+                <Route exact path="/updateproject/:id">
                     <Update />
                 </Route>
             </Switch>

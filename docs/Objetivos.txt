@@ -1,9 +1,11 @@
 Objetivos
 
+Todos os objetivos alcançados!
+
 OK fazer os LInks entre as telas
-----Botão editar - página inicial
+OK Botão editar - página inicial
 OK capturar dados do ID e distribuir na tela TelaUpdate
-----capturar ID da tela inicial para tela update
+OK capturar ID da tela inicial para tela update
 
 
 

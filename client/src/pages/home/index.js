@@ -18,6 +18,7 @@ import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO'
 import pt from 'date-fns/locale/pt';
 import { Redirect } from 'react-router-dom'
+import { withRouter } from 'react-router'
 
 class Page extends Component {
 
@@ -29,7 +30,6 @@ class Page extends Component {
         redirect: null,
     }
 
-    //OK
     async getProjectList(action) {
         if (action == 0) {
             const response = await api.get("/api/getprojectlist");
@@ -51,7 +51,6 @@ class Page extends Component {
         }
     }
 
-    //OK
     async updateStatusProjectButton(id, statusP) {
         const response = await api.put("/api/updatestatusproject", {
             id: id,
@@ -61,16 +60,12 @@ class Page extends Component {
         this.getProjectList(0);
     }
 
-    //FALTA TERMINAR
     async redirectToUpdatePage(id) {
-
+        this.props.history.push(`/updateproject/${id}`);
     }
 
     componentDidMount() {
         this.getProjectList(0);
-    }
-
-    componentDidUpdate() {
     }
 
     render() {
@@ -82,8 +77,6 @@ class Page extends Component {
         const { projectList } = this.state;
         const { viability } = this.state;
         const { statusP } = this.state;
-        // const { startDate } = this.state;
-        // const { ccDate } = this.state;
 
         const itemsViability = [
             { value: '0', label: 'Todos' },
@@ -235,7 +228,7 @@ class Page extends Component {
             </div>
         );
     }
-
 }
 
-export default Page;
+export default withRouter(Page);
+//const PageWithRouter = withRouter(Page);
