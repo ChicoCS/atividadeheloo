@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router-dom'
 import api from '../services/api'
+import './styles.css';
 import { TextField, Button } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import Input from '@material-ui/core/Input';
@@ -9,7 +10,6 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { format } from 'date-fns';
-import './styles.css';
 
 
 class Page extends Component {
@@ -43,7 +43,6 @@ class Page extends Component {
             alert("Preencha todos os Campos");
         });
     };
-
 
     render() {
 
@@ -129,29 +128,36 @@ class Page extends Component {
                             <MenuItem value={4}>Concluído</MenuItem>
                         </Select>
                     </FormControl>
-                    <TextField required
-                        id="startDate"
-                        label="Data de Início"
-                        type="date"
-                        defaultValue="0000-00-00"
-                        InputLabelProps={{
-                            shrink: true,
-                        }} onChange={(event) => {
-                            this.setState({ startDate: (event.target.value) });
-                        }} />
-                    <TextField required
-                        id="endDate"
-                        label="Previsão Data Final"
-                        type="date"
-                        defaultValue="0000-00-00"
-                        InputLabelProps={{
-                            shrink: true,
-                        }} onChange={(event) => {
-                            this.setState({ endDate: (event.target.value) });
-                        }} />
-                    <Button variant="contained" color="primary" disableElevation onClick={this.submitData}>
-                        Cadastrar
+                    <div className="button">
+                        <TextField required
+                            id="startDate"
+                            label="Data de Início"
+                            type="date"
+                            defaultValue="0000-00-00"
+                            InputLabelProps={{
+                                shrink: true,
+                            }} onChange={(event) => {
+                                this.setState({ startDate: (event.target.value) });
+                            }} />
+                        <TextField required
+                            id="endDate"
+                            label="Previsão Data Final"
+                            type="date"
+                            defaultValue="0000-00-00"
+                            InputLabelProps={{
+                                shrink: true,
+                            }} onChange={(event) => {
+                                this.setState({ endDate: (event.target.value) });
+                            }} />
+                    </div>
+                    <div className="button">
+                        <Button variant="contained" color="primary" disableElevation onClick={this.submitData}>
+                            Cadastrar
                      </Button>
+                        <Button variant="contained" color="primary" onClick={() => this.setState({ redirect: "/" })}>
+                            Voltar para Pagina Inicial
+                     </Button>
+                    </div>
 
                 </div>
             </div >

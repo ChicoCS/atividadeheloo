@@ -1,6 +1,8 @@
 import React, { useState, useEffect, Component } from "react";
-import './styles.css';
+import { Redirect } from 'react-router-dom'
+import { withRouter } from 'react-router'
 import api from '../services/api'
+import './styles.css';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -14,11 +16,13 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO'
 import pt from 'date-fns/locale/pt';
-import { Redirect } from 'react-router-dom'
-import { withRouter } from 'react-router'
+
 
 class Page extends Component {
 
@@ -37,7 +41,6 @@ class Page extends Component {
                 projectList: response.data
             });
         } else if (action == 1 || action == null) {
-            action = 2;
             const response = await api.get("/api/filterProjectList", {
                 params: {
                     viability: this.state.viability,
@@ -52,7 +55,7 @@ class Page extends Component {
     }
 
     async updateStatusProjectButton(id, statusP) {
-        const response = await api.put("/api/updatestatusproject", {
+        await api.put("/api/updatestatusproject", {
             id: id,
             statusP: statusP,
             ccDate: this.state.ccDate,
@@ -77,26 +80,6 @@ class Page extends Component {
         const { projectList } = this.state;
         const { viability } = this.state;
         const { statusP } = this.state;
-
-        const itemsViability = [
-            { value: '0', label: 'Todos' },
-            { value: '1', label: '1' },
-            { value: '2', label: '2' },
-            { value: '3', label: '3' },
-            { value: '4', label: '4' },
-            { value: '5', label: '5' },
-        ];
-        const itemsStatus = [
-            { value: '0', label: 'Todos' },
-            { value: '1', label: 'Planejado' },
-            { value: '2', label: 'Em Desenvolvimento' },
-            { value: '3', label: 'Cancelado' },
-            { value: '4', label: 'Concluído' },
-        ];
-
-        const registerButton = () => {
-            window.location.href = "http://localhost:3000/registerproject";
-        };
         const handleChangeViability = (event) => {
             this.setState({ viability: (event.target.value) });
         };
@@ -109,41 +92,41 @@ class Page extends Component {
                 <ul className="form">
                     <h1>Página Inicial</h1>
 
-                    <Button variant="contained" onClick={registerButton}>
+                    <Button variant="contained" onClick={() => this.setState({ redirect: "/registerproject" })}>
                         Cadastrar novo Projeto
                      </Button>
                     <ul>
-                        <TextField
-                            id="standard-select-currency"
-                            select
-                            label="Viabilidade"
-                            value={viability}
-                            onChange={handleChangeViability}
-                            defaultValue="1"
-                            helperText="1=Menos viável / 5=Mais viável"
-                        >
-                            {itemsViability.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-
-                        <TextField
-                            id="standard-select-currency"
-                            select
-                            label="Status"
-                            value={statusP}
-                            onChange={handleChangeStatus}
-                            defaultValue="1"
-                        >
-                            {itemsStatus.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-
+                        <FormControl>
+                            <InputLabel id="viability label">Viabilidade</InputLabel>
+                            <Select
+                                labelId="viability-label"
+                                id="viability label"
+                                value={viability}
+                                onChange={handleChangeViability}
+                            >
+                                <MenuItem value={0}>Todos</MenuItem>
+                                <MenuItem value={1}>1</MenuItem>
+                                <MenuItem value={2}>2</MenuItem>
+                                <MenuItem value={3}>3</MenuItem>
+                                <MenuItem value={4}>4</MenuItem>
+                                <MenuItem value={5}>5</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl>
+                            <InputLabel id="statusP">Situação</InputLabel>
+                            <Select
+                                labelId="statusP label"
+                                id="statusP"
+                                value={statusP}
+                                onChange={handleChangeStatus}
+                            >
+                                <MenuItem value={0}>Todos</MenuItem>
+                                <MenuItem value={1}>Planejado</MenuItem>
+                                <MenuItem value={2}>Em Desenvolvimento</MenuItem>
+                                <MenuItem value={3}>Cancelado</MenuItem>
+                                <MenuItem value={4}>Concluído</MenuItem>
+                            </Select>
+                        </FormControl>
                         <TextField
                             id="startDate"
                             label="Data de Início"
@@ -231,4 +214,3 @@ class Page extends Component {
 }
 
 export default withRouter(Page);
-//const PageWithRouter = withRouter(Page);

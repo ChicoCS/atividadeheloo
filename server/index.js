@@ -31,19 +31,34 @@ app.get("/api/filterprojectList", (req, res) => {
     let statusP = req.query.statusP;
     let startDate = req.query.startDate;
 
+    if (startDate == '') {
+        startDate = undefined;
+        console.log("startDate new=", startDate)
+    }
+
     if (viability > 0 && statusP > 0 && startDate != undefined) {
         const sqlSelect = "SELECT * FROM dbproject.project WHERE viability=? AND statusP=? AND startDate=?";
         conect.query(sqlSelect, [viability, statusP, startDate])
             .then(result => {
                 res.send(result);
+                console.log("filtrou todos")
             })
             .catch(error => {
             });
     } else if (statusP == 0 && startDate == undefined) {
+        if (viability == 0) {
+            const sqlSelect = "SELECT * FROM dbproject.project";
+            conect.query(sqlSelect)
+                .then(result => {
+                    res.send(result);
+                    console.log("filtrou TUDO")
+                })
+        }
         sqlSelect = "SELECT * FROM dbproject.project WHERE viability=?";
         conect.query(sqlSelect, [viability])
             .then(result => {
                 res.send(result);
+                console.log("filtrou viabilidade")
             })
             .catch(error => {
             });
@@ -52,6 +67,7 @@ app.get("/api/filterprojectList", (req, res) => {
         conect.query(sqlSelect, [statusP])
             .then(result => {
                 res.send(result);
+                console.log("filtrou status")
             })
             .catch(error => {
             });
@@ -60,6 +76,7 @@ app.get("/api/filterprojectList", (req, res) => {
         conect.query(sqlSelect, [startDate])
             .then(result => {
                 res.send(result);
+                console.log("filtrou startDate")
             })
             .catch(error => {
             });
@@ -68,6 +85,7 @@ app.get("/api/filterprojectList", (req, res) => {
         conect.query(sqlSelect, [viability, statusP])
             .then(result => {
                 res.send(result);
+                console.log("filtrou viabilidade+status")
             })
             .catch(error => {
             });
@@ -76,6 +94,7 @@ app.get("/api/filterprojectList", (req, res) => {
         conect.query(sqlSelect, [viability, startDate])
             .then(result => {
                 res.send(result);
+                console.log("filtrou viabilidade+data")
             })
             .catch(error => {
             });
@@ -84,6 +103,7 @@ app.get("/api/filterprojectList", (req, res) => {
         conect.query(sqlSelect, [statusP, startDate])
             .then(result => {
                 res.send(result);
+                console.log("filtrou status+data")
             })
             .catch(error => {
             });
@@ -93,9 +113,22 @@ app.get("/api/filterprojectList", (req, res) => {
 app.put('/api/updatedescription', (req, res) => {
     const id = req.body.id;
     const description = req.body.description;
-    console.log('des', description);
     const sqlUpdate = "UPDATE dbproject.project SET `description`=? WHERE `id`=?;"
     conect.query(sqlUpdate, [description, id])
+        .then(response => {
+            res.send(response);
+            console.log(response);
+        })
+        .catch(error => {
+            console.log();
+        });
+})
+
+app.put('/api/updateviability', (req, res) => {
+    const id = req.body.id;
+    const viability = req.body.viability;
+    const sqlUpdate = "UPDATE dbproject.project SET `viability`=? WHERE `id`=?;"
+    conect.query(sqlUpdate, [viability, id])
         .then(response => {
             res.send(response);
             console.log(response);
@@ -109,7 +142,6 @@ app.put('/api/updatestatusproject', (req, res) => {
     const id = req.body.id;
     const statusP = req.body.statusP;
     const ccDate = req.body.ccDate;
-    console.log('ccDate=', ccDate, "id=", id, 'statusP=', statusP)
 
     if (statusP >= 3) {
         const sqlUpdate = "UPDATE dbproject.project SET `statusP`=?, `ccDate`=? WHERE  `id`=?;"
@@ -134,95 +166,13 @@ app.put('/api/updatestatusproject', (req, res) => {
     }
 });
 
-
-//UPDATEPROJECT FAZER UPDATEVIABILITY!
-app.put('/api/updateproject', (req, res) => {
-    const id = req.body.id;
-    const description = req.body.description;
-    const viability = req.body.viability;
-    const statusP = req.body.statusP;
-    console.log('des=', description, 'via=', viability, 'status=', statusP)
-
-    if (description != undefined && viability != undefined && statusP != undefined) {
-        const sqlUpdate = "UPDATE dbproject.project SET `description`=?, `viability`=?, `statusP`=? WHERE `id`=?;"
-        conect.query(sqlUpdate, [description, viability, statusP, id])
-            .then(response => {
-                res.send(response);
-                console.log(response);
-            })
-            .catch(error => {
-                console.log();
-            });
-    } else if (statusP == undefined) {
-        sqlUpdate = "UPDATE dbproject.project SET `description`, `viability`=? WHERE `id`=?;"
-        conect.query(sqlUpdate, [description, viability, id])
-            .then(response => {
-                res.send(response);
-                console.log(response);
-            })
-            .catch(error => {
-                console.log();
-            });
-    } else if (viability == undefined) {
-        sqlUpdate = "UPDATE dbproject.project SET `description`, `statusP`=? WHERE `id`=?;"
-        conect.query(sqlUpdate, [description, statusP, id])
-            .then(response => {
-                res.send(response);
-                console.log(response);
-            })
-            .catch(error => {
-                console.log();
-            });
-    } else if (description == undefined) {
-        sqlUpdate = "UPDATE dbproject.project SET `viability`, `statusP`=? WHERE `id`=?;"
-        conect.query(sqlUpdate, [viability, statusP, id])
-            .then(response => {
-                res.send(response);
-                console.log(response);
-            })
-            .catch(error => {
-                console.log();
-            });
-    } else if (viability == undefined && statusP == undefined) {
-        sqlUpdate = "UPDATE dbproject.project SET `description`=? WHERE `id`=?;"
-        conect.query(sqlUpdate, [description, id])
-            .then(response => {
-                res.send(response);
-                console.log(response);
-            })
-            .catch(error => {
-                console.log();
-            });
-    } else if (description == undefined && statusP == undefined) {
-        sqlUpdate = "UPDATE dbproject.project SET `viability`=? WHERE `id`=?;"
-        conect.query(sqlUpdate, [viability, id])
-            .then(response => {
-                res.send(response);
-                console.log(response);
-            })
-            .catch(error => {
-                console.log();
-            });
-    } else if (description == undefined && viability == undefined) {
-        sqlUpdate = "UPDATE dbproject.project SET `statusP`=? WHERE `id`=?;"
-        conect.query(sqlUpdate, [statusP, id])
-            .then(response => {
-                res.send(response);
-                console.log(response);
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }
-});
-
-
 app.get('/api/getidproject', (req, res) => {
     let id = req.query.id;
     const sqlSelect = "SELECT * FROM dbproject.project WHERE id=?"
     conect.query(sqlSelect, [id])
         .then(result => {
             res.send(result);
+            console.log(response);
         })
         .catch(error => {
         });
@@ -242,6 +192,7 @@ app.post("/api/insertproject", (req, res, next) => {
     conect.query(sqlInsert, [nameOwner, description, valueP, viability, statusP, startDate, endDate, registerDate])
         .then(response => {
             res.send(response);
+            console.log(response);
         })
         .catch(err => {
             next(err);

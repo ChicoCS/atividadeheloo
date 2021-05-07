@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import api from '../services/api'
-import { Redirect } from 'react-router-dom'
+import { withRouter } from 'react-router';
+import { Redirect } from 'react-router-dom';
+import api from '../services/api';
+import './styles.css';
 import { Button } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import Input from '@material-ui/core/Input';
@@ -9,8 +11,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { format, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
-import './styles.css';
-import { withRouter } from 'react-router'
+
 
 class Page extends Component {
 
@@ -46,28 +47,24 @@ class Page extends Component {
                 description: this.state.description,
             })
         }
+        if (this.state.viability != undefined) {
+            await api.put("/api/updateviability", {
+                id: this.state.id,
+                viability: this.state.viability,
+            })
+        }
     }
 
     submitData = async () => {
-        this.updateData()
-
-        /*await api.put("/api/updateproject", {
-            id: this.state.id,
-            description: this.state.description,
-            viability: this.state.viability,
-            statusP: this.state.statusP,
-        })
-        alert("Alteração Realizada com Sucesso");
-        this.setState({ redirect: "/" });*/
-
-        /*await api.put("/api/updateproject", {
-            id: this.state.id,
-            description: this.state.description,
-            viability: this.state.viability,
-            statusP: this.state.statusP,
-        })
-        alert("Alteração Realizada com Sucesso");
-        this.setState({ redirect: "/" });*/
+        if (this.state.description == this.state.viability &&
+            this.state.description == this.state.statusP) {
+            alert("Nenhum dado foi Alterado");
+            this.setState({ redirect: "/" });
+        } else {
+            await this.updateData();
+            alert("Alteração Realizada com Sucesso");
+            this.setState({ redirect: "/" });
+        }
     };
 
     componentDidMount() {
@@ -96,7 +93,7 @@ class Page extends Component {
 
         return (
 
-            <div>
+            <div className="title">
                 <h1>Atualizar Cadastro</h1>
 
                 {project.map((project) => (
@@ -165,36 +162,40 @@ class Page extends Component {
                                 <MenuItem value={4}>Concluído</MenuItem>
                             </Select>
                         </FormControl>
-                        <FormControl >
-                            <InputLabel htmlFor="startDate">Data de Início</InputLabel>
-                            <Input
-                                id="startDate"
-                                type="text"
-                                value={format(parseISO(project.startDate), 'dd/MM/yyyy', { locale: pt })}
-                            />
-                        </FormControl>
-                        <FormControl >
-                            <InputLabel htmlFor="endDate">Data Fim Prevista</InputLabel>
-                            <Input
-                                id="endDate"
-                                type="text"
-                                value={format(parseISO(project.endDate), 'dd/MM/yyyy', { locale: pt })}
-                            />
-                        </FormControl>
-                        <FormControl >
-                            <InputLabel htmlFor="registerDate">Data de Registro</InputLabel>
-                            <Input
-                                id="registerDate"
-                                type="text"
-                                value={format(parseISO(project.registerDate), 'dd/MM/yyyy', { locale: pt })}
-                            />
-                        </FormControl>
-                        <Button variant="contained" color="primary" onClick={() => this.submitData()}>
-                            Atualizar
+                        <div className="button">
+                            <FormControl >
+                                <InputLabel htmlFor="startDate">Data de Início</InputLabel>
+                                <Input
+                                    id="startDate"
+                                    type="text"
+                                    value={format(parseISO(project.startDate), 'dd/MM/yyyy', { locale: pt })}
+                                />
+                            </FormControl>
+                            <FormControl >
+                                <InputLabel htmlFor="endDate">Data Fim Prevista</InputLabel>
+                                <Input
+                                    id="endDate"
+                                    type="text"
+                                    value={format(parseISO(project.endDate), 'dd/MM/yyyy', { locale: pt })}
+                                />
+                            </FormControl>
+                            <FormControl >
+                                <InputLabel htmlFor="registerDate">Data de Registro</InputLabel>
+                                <Input
+                                    id="registerDate"
+                                    type="text"
+                                    value={format(parseISO(project.registerDate), 'dd/MM/yyyy', { locale: pt })}
+                                />
+                            </FormControl>
+                        </div>
+                        <div className="button">
+                            <Button variant="contained" color="primary" onClick={() => this.submitData()}>
+                                Atualizar
                         </Button>
-                        <Button variant="contained" color="primary" onClick={() => this.setState({ redirect: "/" })}>
-                            Voltar
+                            <Button variant="contained" color="primary" onClick={() => this.setState({ redirect: "/" })}>
+                                Voltar para Pagina Inicial
                         </Button>
+                        </div>
                     </div>
                 ))}
             </div >
